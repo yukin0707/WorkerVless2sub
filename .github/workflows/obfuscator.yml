@@ -2,7 +2,6 @@ name: Obfuscate and Commit
 
 on:
     push:
-        branches: [beta]
         paths:
             - '_worker.src.js'
     workflow_dispatch:
@@ -29,9 +28,12 @@ jobs:
       - name: Prepare files for obfuscation
         run: |
           if grep -q "/*Obfuscate*/" _worker.src.js; then
-            awk '/\/\*Obfuscate\*\//{flag=1; next} flag' _worker.src.js > obf.js
-            awk '/\/\*Obfuscate\*\//{exit} {print}' _worker.src.js > src.js
+            # 提取 /*Obfuscate*/ 之后的内容用于混淆
+            sed -n '/\/\*Obfuscate\*\//,$p' _worker.src.js > obf.js
+            # 提取 /*Obfuscate*/ 之前的内容
+            sed '/\/\*Obfuscate\*\//q' _worker.src.js > src.js
           else
+            # 如果不存在 /*Obfuscate*/，全文件进行混淆
             cp _worker.src.js obf.js
           fi
 
