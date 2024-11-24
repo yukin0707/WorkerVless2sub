@@ -28,7 +28,7 @@ jobs:
       - name: Prepare files for obfuscation
         run: |
           if grep -q "/*Obfuscate*/" _worker.src.js; then
-            echo "执行部分混淆
+            echo "执行部分混淆"
             # 提取 /*Obfuscate*/ 之后的内容用于混淆
             sed -n '/\/\*Obfuscate\*\//,$p' _worker.src.js > obf.js
             # 提取 /*Obfuscate*/ 之前的内容
