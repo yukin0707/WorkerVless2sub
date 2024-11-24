@@ -27,17 +27,21 @@ jobs:
 
       - name: Prepare files for obfuscation
         run: |
-          if grep -q "/*Obfuscate*/" _worker.src.js; then
-            echo "执行部分混淆"
-            # 提取 /*Obfuscate*/ 之后的内容用于混淆
-            sed -n '/\/\*Obfuscate\*\//,$p' _worker.src.js > obf.js
-            # 提取 /*Obfuscate*/ 之前的内容
-            sed '/\/\*Obfuscate\*\//q' _worker.src.js > src.js
+          if grep -q "Obfuscate-cmliu" _worker.src.js; then
+            echo "检测到 Obfuscate 准备分段处理"
+            # 找到 "Obfuscate-cmliu" 所在行号
+            line_number=$(awk '/Obfuscate-cmliu/ {print NR; exit}' _worker.src.js)
+            echo "Obfuscate-cmliu 行号为: $line_number"
+            # 提取行号以上的内容 (包括 Obfuscate-cmliu 所在行)
+            head -n $line_number _worker.src.js > src.js
+            # 提取行号以下的内容
+            tail -n +$((line_number + 1)) _worker.src.js > obf.js
           else
-            echo "执行全文件混淆"
-            # 如果不存在 /*Obfuscate*/，全文件进行混淆
+            echo "未检测到 Obfuscate 执行全文件混淆"
+            # 如果不存在 "Obfuscate-cmliu"，全文件进行混淆
             cp _worker.src.js obf.js
           fi
+
 
       - name: Obfuscate code
         run: |
