@@ -66,6 +66,7 @@ let fakeHostName ;
 let httpsPorts = ["2053","2083","2087","2096","8443"];
 let effectiveTime = 7;//有效时间 单位:天
 let updateTime = 3;//更新时间
+/*Obfuscate*/
 async function sendMessage(type, ip, add_data = "") {
 	if ( BotToken !== '' && ChatID !== ''){
 		let msg = "";
